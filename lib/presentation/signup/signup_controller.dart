@@ -94,7 +94,7 @@ class SignupController extends GetxController {
           state = const SignupSuccess();
           showMessage(TrKeys.registeredSuccessfully.trn, true);
           // On success, navigate to the home screen, clearing the navigation stack
-          Get.offAllNamed(AppRoutes.home);
+          Get.offAllNamed(AppRoutes.mainLayout);
         },
         failure: (error) {
           state = SignupError(message: error.message);

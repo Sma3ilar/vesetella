@@ -6,7 +6,7 @@ import '../core/helpers/api_result.dart';
 import '../core/helpers/dio_api_manager.dart';
 import '../core/helpers/network_exceptions.dart';
 import '../core/helpers/token_interceptor.dart';
-import '../models/data/design_model';
+import '../models/data/new_design_model.dart';
 
 class DesignRepository {
   final DioApiManager apiManager;
@@ -33,7 +33,7 @@ class DesignRepository {
     }
   }
 
-  Future<CoreApiResult<DesignModel>> fetchDesignData({
+  Future<CoreApiResult<NewDesignModel>> fetchDesignData({
     required int productID,
   }) async {
     try {
@@ -43,7 +43,7 @@ class DesignRepository {
         // queryParameters: {"page": page},
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-      final product = DesignModel.fromJson(response.data['data']);
+      final product = NewDesignModel.fromJson(response.data['data']);
       return CoreApiResult.success(data: product);
     } catch (e) {
       final error = NetworkExceptions.getDioException(e);

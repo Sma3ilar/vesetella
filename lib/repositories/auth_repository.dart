@@ -5,7 +5,7 @@ import '../core/helpers/api_result.dart';
 import '../core/helpers/dio_api_manager.dart';
 import '../core/helpers/network_exceptions.dart';
 import '../core/helpers/token_interceptor.dart';
-import '../models/data/user_model';
+import '../models/data/user_model.dart';
 import '../models/request/signup_request.dart';
 import '../models/response/login_response_model';
 

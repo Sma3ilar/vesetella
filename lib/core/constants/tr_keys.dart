@@ -387,4 +387,7 @@ class TrKeys {
   static var emailIsRequired = 'email_is_required';
 
   static var loggedInSuccessfully = 'logged_in_successfully';
+
+  static var designCreatedSuccessfully = 'design_created_successfully';
+  static var designCreatedFailed = 'design_created_failed';
 }

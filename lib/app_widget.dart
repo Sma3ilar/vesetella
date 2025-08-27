@@ -3,11 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:pg_web/core/theme/colors.dart';
+import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 import 'core/helpers/dependency_manager.dart';
 import 'core/routes/app_router.dart';
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key});
+  MyApp({super.key}) {
+    // Set URL strategy to path-based (no hash)
+    setUrlStrategy(PathUrlStrategy());
+  }
   final appBindings = AppBindings();
 
   @override

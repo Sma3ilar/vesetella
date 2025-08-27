@@ -1,18 +1,18 @@
-class DesignModel {
+class NewDesignModel {
   final String sleeveType;
   final String collarType;
   final String color;
   final String fabricType;
 
-  DesignModel({
+  NewDesignModel({
     required this.sleeveType,
     required this.collarType,
     required this.color,
     required this.fabricType,
   });
 
-  factory DesignModel.fromJson(Map<String, dynamic> json) {
-    return DesignModel(
+  factory NewDesignModel.fromJson(Map<String, dynamic> json) {
+    return NewDesignModel(
       sleeveType: json['sleeve_type'] ?? '',
       collarType: json['collar_type'] ?? '',
       color: json['color'] ?? '',
@@ -31,26 +31,20 @@ class DesignModel {
 }
 
 class DesignList {
-  final List<DesignModel> designs;
+  final List<NewDesignModel> designs;
 
-  DesignList({
-    required this.designs,
-  });
+  DesignList({required this.designs});
 
   factory DesignList.fromJson(Map<String, dynamic> json) {
     var designsList = json['designs'] as List;
-    List<DesignModel> designModelList = designsList
-        .map((designJson) => DesignModel.fromJson(designJson))
+    List<NewDesignModel> NewdesignModelList = designsList
+        .map((designJson) => NewDesignModel.fromJson(designJson))
         .toList();
 
-    return DesignList(
-      designs: designModelList,
-    );
+    return DesignList(designs: NewdesignModelList);
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'designs': designs.map((design) => design.toJson()).toList(),
-    };
+    return {'designs': designs.map((design) => design.toJson()).toList()};
   }
 }

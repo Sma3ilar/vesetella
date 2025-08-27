@@ -93,7 +93,7 @@ class LoginController extends GetxController {
           state.value = LoginState.success();
           showMessage(TrKeys.loggedInSuccessfully.trn, true);
           // On success, navigate to the home screen, clearing the navigation stack
-          Get.offAllNamed(AppRoutes.home);
+          Get.offAllNamed(AppRoutes.mainLayout);
         },
         failure: (error) {
           state.value = LoginState.error(message: error.message);
