@@ -1,0 +1,24 @@
+import 'package:flutter/material.dart';
+
+import '../../core/theme/colors.dart';
+
+class CustomRefreshIndicator extends StatelessWidget {
+  final Future<void> Function() onRefresh;
+  final Widget child;
+
+  const CustomRefreshIndicator({
+    super.key,
+    required this.onRefresh,
+    required this.child,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RefreshIndicator(
+      onRefresh: onRefresh,
+      color: AppColors.orange500, // Set the color to your theme color
+      strokeWidth: 2.0, // Set the thickness of the indicator
+      child: child,
+    );
+  }
+}
