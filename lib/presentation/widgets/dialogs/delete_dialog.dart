@@ -15,21 +15,21 @@ class ConfirmDeleteDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       backgroundColor: AppColors.white,
-      title: Text(TrKeys.confirmDeletion.trn),
+      title: Text(TrKeys.confirmDeletion),
       content: Text(
-        '${TrKeys.areYouSureYouWantToDelete.trn} $title${TrKeys.questionMark.trn}',
+        '${TrKeys.areYouSureYouWantToDelete} $title${TrKeys.questionMark}',
       ),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
           child: Text(
-            TrKeys.cancel.trn,
+            TrKeys.cancel,
             style: AppStyles.textStyle500(color: AppColors.black),
           ),
         ),
         AppButton(
           buttonColor: AppColors.red,
-          text: TrKeys.delete.trn,
+          text: TrKeys.delete,
           textStyle: AppStyles.buttonTextStyle(color: AppColors.white),
           onPressed: () => Navigator.of(context).pop(true),
         ),

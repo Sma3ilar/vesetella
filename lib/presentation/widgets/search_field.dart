@@ -25,7 +25,7 @@ class SearchField extends StatelessWidget {
             horizontal: 15.w,
             vertical: 12.h,
           ),
-          hintText: TrKeys.search.trn,
+          hintText: TrKeys.search,
           hintStyle: AppStyles.textStyle400(
             fontSize: 14.sp,
             color: const Color(0xFFBABABA),
@@ -82,7 +82,7 @@ class TappableSearchField extends StatelessWidget {
             Icon(Icons.search, size: 20.r, color: const Color(0xFFBABABA)),
             SizedBox(width: 12.w),
             Text(
-              TrKeys.search.trn,
+              TrKeys.search,
               style: AppStyles.textStyle400(
                 fontSize: 14.sp,
                 color: const Color(0xFFBABABA),

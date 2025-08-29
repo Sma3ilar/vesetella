@@ -8,32 +8,38 @@ class DesignScreen extends GetView<DesignController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 50.w),
-      padding: EdgeInsets.symmetric(horizontal: 100.w, vertical: 50.h),
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(48),
-          topRight: Radius.circular(48),
-        ),
-        gradient: const LinearGradient(
-          begin: Alignment(1.00, 1.00),
-          end: Alignment(0.00, 0.00),
-          colors: [Color(0xFFFDE2C5), Color(0xFFE2E5CA)],
-        ),
-        image: DecorationImage(
-          image: const AssetImage('assets/images/shapes.png'),
-          fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            Colors.white.withOpacity(0.5),
-            BlendMode.dstATop,
+    return Obx(() {
+      // First check if the controller is in a loading state
+      if (controller.isLoading.value) {
+        return const Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+      
+      return Container(
+        margin: EdgeInsets.symmetric(horizontal: 50.w),
+        padding: EdgeInsets.symmetric(horizontal: 100.w, vertical: 50.h),
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(48),
+            topRight: Radius.circular(48),
+          ),
+          gradient: const LinearGradient(
+            begin: Alignment(1.00, 1.00),
+            end: Alignment(0.00, 0.00),
+            colors: [Color(0xFFFDE2C5), Color(0xFFE2E5CA)],
+          ),
+          image: DecorationImage(
+            image: const AssetImage('assets/images/shapes.png'),
+            fit: BoxFit.cover,
+            colorFilter: ColorFilter.mode(
+              Colors.white.withOpacity(0.5),
+              BlendMode.dstATop,
+            ),
           ),
         ),
-      ),
-      // Use Obx to rebuild the body when controller.currentStep changes
-      child: Obx(() {
-        // Animate the transition between steps for a smoother feel
-        return AnimatedSwitcher(
+        // Use AnimatedSwitcher for smooth transitions between steps
+        child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, animation) {
             return FadeTransition(opacity: animation, child: child);
@@ -43,9 +49,9 @@ class DesignScreen extends GetView<DesignController> {
             key: ValueKey<int>(controller.currentStep.value),
             child: _buildCurrentStep(),
           ),
-        );
-      }),
-    );
+        ),
+      );
+    });
   }
 
   /// Returns the widget for the current step.

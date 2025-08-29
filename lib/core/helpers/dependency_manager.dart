@@ -13,7 +13,7 @@ class AppBindings extends Bindings {
 
     Get.lazyPut<TokenService>(() => TokenService(), fenix: true);
     Get.lazyPut<DioApiManager>(() => DioApiManager(), fenix: true);
-    Get.lazyPut<TranslationService>(() => TranslationService(), fenix: true);
+    // Get.lazyPut<TranslationService>(() => TranslationService(), fenix: true);
 
     // ######################## Repositories ######################## //
 

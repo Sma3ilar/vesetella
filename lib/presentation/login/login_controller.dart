@@ -5,6 +5,8 @@ import 'package:pg_web/presentation/widgets/snack_bar.dart'; // Your custom snac
 import 'package:pg_web/core/constants/tr_keys.dart'; // Your translation keys
 import 'package:pg_web/models/request/login_request.dart'; // We will create this
 import 'package:pg_web/repositories/auth_repository.dart'; // Reusing this from signup
+import '../../core/constants/app_constants.dart';
+import '../../core/helpers/local_storage.dart';
 import '../../core/routes/app_router.dart';
 import 'login_state.dart'; // We will create this
 
@@ -48,12 +50,14 @@ class LoginController extends GetxController {
 
   /// Validates all form inputs and returns an error message string if any are invalid.
   String? validateInputs() {
-    if (emailController.text.isEmpty) return TrKeys.emailIsRequired.trn;
-    if (!GetUtils.isEmail(emailController.text))
-      return TrKeys.invalidEmailFormat.trn;
-    if (passwordController.text.isEmpty) return TrKeys.passwordIsRequired.trn;
-    if (passwordController.text.length < 6)
-      return TrKeys.passwordMustBeAtLeast6Characters.trn;
+    if (emailController.text.isEmpty) return TrKeys.emailIsRequired;
+    if (!GetUtils.isEmail(emailController.text)) {
+      return TrKeys.invalidEmailFormat;
+    }
+    if (passwordController.text.isEmpty) return TrKeys.passwordIsRequired;
+    if (passwordController.text.length < 6) {
+      return TrKeys.passwordMustBeAtLeast6Characters;
+    }
 
     // Return null if all validations pass
     return null;
@@ -75,23 +79,24 @@ class LoginController extends GetxController {
     state.value = LoginState.loading();
 
     try {
-      // 3. Create the request object from controller values
-      final request = LoginRequest(
-        email: emailController.text,
-        password: passwordController.text,
-      );
-
-      // 4. Call the repository to perform the login
+      // 3. Call the repository to perform the login
       final result = await authRepository.login(
         username: emailController.text,
         password: passwordController.text,
-      ); // We'll add this method to AuthRepository
+      );
 
       // 5. Handle the success or failure result
       result.when(
-        success: (_) {
+        success: (data) async {
+          if (data != null) {
+            // Save user data and token in cache using setUserData instead of saveObject
+            await LocalStorage.instance.setUserData(data.data!);
+            await LocalStorage.instance.setToken(data.accessToken);
+            await LocalStorage.instance.setAuth(true);
+          }
+
           state.value = LoginState.success();
-          showMessage(TrKeys.loggedInSuccessfully.trn, true);
+          showMessage(TrKeys.loggedInSuccessfully, true);
           // On success, navigate to the home screen, clearing the navigation stack
           Get.offAllNamed(AppRoutes.mainLayout);
         },
@@ -106,7 +111,7 @@ class LoginController extends GetxController {
     } catch (e) {
       // Handle any unexpected errors during the process
       state.value = LoginState.error(message: e.toString());
-      showMessage(TrKeys.unexpectedError.trn, false);
+      showMessage(TrKeys.unexpectedError, false);
     }
   }
 

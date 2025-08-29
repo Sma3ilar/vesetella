@@ -1,26 +1,15 @@
-enum UserType {
-  visitors,
-  companies,
-}
+enum UserType { visitors, companies }
 
 enum InfoType { phone, email, url, text }
 
-enum SearchType {
-  companies,
-  products,
-  partners,
-  services,
-  news,
-  abouts,
-}
+enum SearchType { companies, products, partners, services, news, abouts }
 
 class AppConstants {
   AppConstants._();
 
   // Cache keys
   static const String keyToken = "userTokenKey";
-  static const String keyVisitorUser = "keyVisitorUser";
-  static const String keyEngineerUser = "keyEngineerUser";
+  static const String keyUser = "keyUser";
   static const String keyUserId = "userIDKey";
   static const String keyUserName = "userNameKey";
   static const String keyUserPassword = "userPasswordKey";
@@ -46,20 +35,14 @@ class AppConstants {
   static const String translationsKey = 'translationsKey';
   static const String defaultLanguage = 'ar';
 
-
-
-
   static const int carouselTime = 3;
 
   static const int captchaLength = 3;
 
   static const String captchaChars = '0123456789';
 
-
-
   static const String placeholderImageLink =
       'https://placehold.co/400x400/white/FDA900.png?text=Khan+Alhandaseh&font=cairo';
-
 
   // /companies/$companyID
   // /products/$productID
@@ -76,25 +59,15 @@ class AppConstants {
   //
   //
 
+  static const String _devShareUrl = 'https://42c4779660ea.ngrok-free.app';
 
-
-  static const String _devShareUrl =
-      'https://test.khan-alhandasah.com/ar';
-
-  static const String _prodShareUrl =
-      'https://khan-alhandasah.com/ar';
+  static const String _prodShareUrl = 'https://khan-alhandasah.com/ar';
 
   static const shareUrl = _devBaseUrl;
 
+  static const String _devBaseUrl = 'https://4002ae1b4a92.ngrok-free.app/api';
 
-  static const String _devBaseUrl =
-      'https://test.khan-alhandasah.com/api';
-
-  static const String _prodBaseUrl =
-      'https://khan-alhandasah.com/api';
+  static const String _prodBaseUrl = 'https://khan-alhandasah.com/api';
 
   static const baseUrl = _devBaseUrl;
-
 }
-
-

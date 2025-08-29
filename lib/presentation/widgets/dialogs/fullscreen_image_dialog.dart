@@ -144,7 +144,7 @@
 //                             ),
 //                             SizedBox(height: 8),
 //                             Text(
-//                               TrKeys.failedToLoadImage.trn,
+//                               TrKeys.failedToLoadImage,
 //                               style: TextStyle(color: Colors.white),
 //                             ),
 //                           ],

@@ -30,7 +30,7 @@ class MyErrorWidget extends StatelessWidget {
             25.verticalSpace,
             if (stateCode != null && kDebugMode) Text('$stateCode'),
             if (error != null && kDebugMode) Text('$error', maxLines: 2),
-            Text('${TrKeys.error.trn} !'),
+            Text('${TrKeys.error} !'),
             24.verticalSpace,
             Row(
               mainAxisSize: MainAxisSize.min,
@@ -43,7 +43,7 @@ class MyErrorWidget extends StatelessWidget {
                   grade: 0.1,
                 ),
                 4.verticalSpace,
-                Text(TrKeys.tryAgain.trn),
+                Text(TrKeys.tryAgain),
               ],
             ),
           ],

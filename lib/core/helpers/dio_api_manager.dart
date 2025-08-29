@@ -17,23 +17,27 @@ class DioApiManager {
   late Dio dio;
 
   _initDio(String baseUrl, List<Interceptor> interceptors) {
-    dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      headers: {"Accept": 'application/json' ,},
-      queryParameters: {"lang": "ar"},
-      receiveDataWhenStatusError: true,
-      contentType: Headers.jsonContentType,
-    ))
-      ..interceptors.addAll(interceptors)
-      ..interceptors.add(LanguageInterceptor())
-      ..interceptors.add(PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        compact: false,
-        logPrint: (object) => debugPrint(object.toString()),
-      )
-      );
+    dio =
+        Dio(
+            BaseOptions(
+              baseUrl: baseUrl,
+              headers: {"Accept": 'application/json'},
+              // queryParameters: {"lang": "ar"},
+              receiveDataWhenStatusError: true,
+              contentType: Headers.jsonContentType,
+            ),
+          )
+          ..interceptors.addAll(interceptors)
+          // ..interceptors.add(LanguageInterceptor())
+          ..interceptors.add(
+            PrettyDioLogger(
+              requestHeader: true,
+              requestBody: true,
+              responseBody: true,
+              responseHeader: false,
+              compact: false,
+              logPrint: (object) => debugPrint(object.toString()),
+            ),
+          );
   }
 }

@@ -22,11 +22,11 @@ class LogoutHelper extends GetxService {
       // Notify listeners that logout is happening
       _onLoggingOutController.add(null);
 
-      // Get.find<VisitorLoginController>().logout();
+      // Get.find<LoginController>().logout();
 
       localStorage.logout();
       Get.back();
-      showMessage(TrKeys.logoutSuccess.trn, true);
+      showMessage(TrKeys.logoutSuccess, true);
       // Get.offAllNamed(AppRoutes.root);
     } catch (e) {
       // Handle errors (e.g., log them or show a message to the user)

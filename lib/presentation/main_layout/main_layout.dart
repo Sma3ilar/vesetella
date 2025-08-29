@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../widgets/main_app_bar.dart';
+import '../../core/routes/app_router.dart';
 
 class MainLayout extends StatelessWidget {
   const MainLayout({super.key});
@@ -12,8 +13,8 @@ class MainLayout extends StatelessWidget {
       appBar: const MainAppBar(),
       // This is the magic widget! It renders the child pages defined in your routes.
       body: GetRouterOutlet(
-        // Use the uri property and convert it to a string.
-        initialRoute: Get.rootDelegate.currentConfiguration!.uri.toString(),
+        // Provide a default route if currentConfiguration is null
+        initialRoute: Get.rootDelegate.currentConfiguration?.uri.toString() ?? AppRoutes.startDesigning,
       ),
     );
   }

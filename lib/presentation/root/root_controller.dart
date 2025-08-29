@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
-import '../../core/routes/app_router.dart'; // Your routes file
+import '../../core/routes/app_router.dart';
+import '../../core/helpers/local_storage.dart';
 
 class RootController extends GetxController {
   @override
@@ -13,19 +14,15 @@ class RootController extends GetxController {
       // Add a small delay to simulate loading processes like checking storage.
       await Future.delayed(const Duration(seconds: 1));
 
-      // --- USER AUTHENTICATION LOGIC ---
+      // Check if user is authenticated using LocalStorage
+      final bool isAuthenticated = LocalStorage.instance.getIsAuth();
+      final String token = LocalStorage.instance.getToken();
 
-      // In a real app, you would read this from device storage.
-      // e.g., using GetStorage: final userToken = GetStorage().read('user_token');
-      // We set it to `null` here to simulate a logged-out user.
-      final String? userToken = null;
-
-      if (userToken == null) {
-        // Navigate to the Welcome Screen.
-        Get.offAllNamed(AppRoutes.welcome);
+      if (isAuthenticated && token.isNotEmpty) {
+        // User is authenticated, navigate to MainLayout
+        Get.offAllNamed(AppRoutes.mainLayout);
       } else {
-        // Handle the case when user is logged in
-        // For now, still navigate to welcome screen
+        // User is not authenticated, navigate to Welcome screen
         Get.offAllNamed(AppRoutes.welcome);
       }
     } catch (e) {

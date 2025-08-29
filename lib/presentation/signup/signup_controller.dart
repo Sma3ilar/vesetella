@@ -5,6 +5,8 @@ import 'package:pg_web/presentation/widgets/snack_bar.dart'; // Your custom snac
 import 'package:pg_web/core/constants/tr_keys.dart'; // Your translation keys
 import 'package:pg_web/models/request/signup_request.dart';
 import 'package:pg_web/repositories/auth_repository.dart';
+import '../../core/constants/app_constants.dart';
+import '../../core/helpers/local_storage.dart' show LocalStorage;
 import '../../core/routes/app_router.dart';
 import 'signup_state.dart';
 
@@ -47,15 +49,15 @@ class SignupController extends GetxController {
 
   /// Validates all form inputs and returns an error message string if any are invalid.
   String? validateInputs() {
-    if (fullNameController.text.isEmpty) return TrKeys.fullNameIsRequired.trn;
-    if (emailController.text.isEmpty) return TrKeys.emailIsRequired.trn;
+    if (fullNameController.text.isEmpty) return TrKeys.fullNameIsRequired;
+    if (emailController.text.isEmpty) return TrKeys.emailIsRequired;
     if (!GetUtils.isEmail(emailController.text))
-      return TrKeys.invalidEmailFormat.trn;
-    if (passwordController.text.isEmpty) return TrKeys.passwordIsRequired.trn;
+      return TrKeys.invalidEmailFormat;
+    if (passwordController.text.isEmpty) return TrKeys.passwordIsRequired;
     if (passwordController.text.length < 6)
-      return TrKeys.passwordMustBeAtLeast6Characters.trn;
+      return TrKeys.passwordMustBeAtLeast6Characters;
     if (confirmPasswordController.text != passwordController.text)
-      return TrKeys.passwordsDoNotMatch.trn;
+      return TrKeys.passwordsDoNotMatch;
 
     // Return null if all validations pass
     return null;
@@ -66,10 +68,7 @@ class SignupController extends GetxController {
     // 1. Validate all inputs before proceeding
     String? validationError = validateInputs();
     if (validationError != null) {
-      showMessage(
-        validationError,
-        false,
-      ); // Assuming showMessage is your custom snackbar helper
+      showMessage(validationError, false);
       return;
     }
 
@@ -80,9 +79,10 @@ class SignupController extends GetxController {
     try {
       // 3. Create the request object from controller values
       final request = SignupRequest(
-        fullName: fullNameController.text,
+        name: fullNameController.text,
         email: emailController.text,
         password: passwordController.text,
+        passwordConfirmation: confirmPasswordController.text,
       );
 
       // 4. Call the repository to perform the signup
@@ -90,24 +90,36 @@ class SignupController extends GetxController {
 
       // 5. Handle the success or failure result
       result.when(
-        success: (_) {
+        success: (data) async {
+          if (data != null) {
+            // Save user data and token in cache
+            if (data.data != null) {
+              await LocalStorage.instance.setUserData(data.data!);
+            }
+            await LocalStorage.instance.setToken(data.accessToken);
+            await LocalStorage.instance.setAuth(true);
+          }
+
+          // Clear form fields
+          fullNameController.clear();
+          emailController.clear();
+          passwordController.clear();
+          confirmPasswordController.clear();
+
           state = const SignupSuccess();
-          showMessage(TrKeys.registeredSuccessfully.trn, true);
+          showMessage(TrKeys.registeredSuccessfully, true);
           // On success, navigate to the home screen, clearing the navigation stack
           Get.offAllNamed(AppRoutes.mainLayout);
         },
         failure: (error) {
           state = SignupError(message: error.message);
-          showMessage(
-            error.message,
-            false,
-          ); // Show the error message from the repository
+          showMessage(error.message, false);
         },
       );
     } catch (e) {
       // Handle any unexpected errors during the process
       state = SignupError(message: e.toString());
-      showMessage(TrKeys.unexpectedError.trn, false);
+      showMessage(TrKeys.unexpectedError, false);
     } finally {
       // 6. Update the UI one last time to reflect the final state
       update();

@@ -7,7 +7,7 @@ import '../core/helpers/network_exceptions.dart';
 import '../core/helpers/token_interceptor.dart';
 import '../models/data/user_model.dart';
 import '../models/request/signup_request.dart';
-import '../models/response/login_response_model';
+import '../models/response/auth_response_model.dart';
 
 class AuthRepository {
   final DioApiManager apiManager;
@@ -27,7 +27,9 @@ class AuthRepository {
   //   }
   // }
 
-  Future<CoreApiResult<void>> register(SignupRequest request) async {
+  Future<CoreApiResult<AuthResponseModel>> register(
+    SignupRequest request,
+  ) async {
     try {
       // Make the POST request using DioApiManager
       final response = await apiManager.dio.post(
@@ -37,13 +39,12 @@ class AuthRepository {
 
       // Check for success
       if (response.statusCode == 200 || response.statusCode == 201) {
-        // Success
-        return CoreApiResult.success(data: null); // No data to return
+        // Success - parse the response data
+        final authResponse = AuthResponseModel.fromJson(response.data);
+        return CoreApiResult.success(data: authResponse);
       } else {
         // Handle API errors
-        final error = NetworkExceptions.defaultError(
-          TrKeys.failedToRegister.trn,
-        );
+        final error = NetworkExceptions.defaultError(TrKeys.failedToRegister);
         return CoreApiResult.failure(error: error);
       }
     } on DioException catch (e) {
@@ -57,7 +58,7 @@ class AuthRepository {
     }
   }
 
-  Future<CoreApiResult<LoginResponse>> login({
+  Future<CoreApiResult<AuthResponseModel>> login({
     required String username,
     required String password,
   }) async {
@@ -69,12 +70,22 @@ class AuthRepository {
 
       // Check for success
       if (response.statusCode == 200 || response.statusCode == 201) {
+        // Check if the response contains a status field indicating failure
+        if (response.data is Map &&
+            response.data['status'] != null &&
+            response.data['status'] == false) {
+          // Handle API logical errors (status: false)
+          final errorMessage = response.data['msg'] ?? TrKeys.failedToLogin;
+          final error = NetworkExceptions.defaultError(errorMessage);
+          return CoreApiResult.failure(error: error);
+        }
+
         // Success
-        final user = LoginResponse.fromJson(response.data);
+        final user = AuthResponseModel.fromJson(response.data);
         return CoreApiResult.success(data: user);
       } else {
         // Handle API errors
-        final error = NetworkExceptions.defaultError("Failed to login");
+        final error = NetworkExceptions.defaultError(TrKeys.failedToLogin);
         return CoreApiResult.failure(error: error);
       }
     } on DioException catch (e) {
@@ -102,7 +113,7 @@ class AuthRepository {
         return CoreApiResult.success(data: true);
       } else {
         // Handle API errors
-        final error = NetworkExceptions.defaultError(TrKeys.failedToLogout.trn);
+        final error = NetworkExceptions.defaultError(TrKeys.failedToLogout);
         return CoreApiResult.failure(error: error);
       }
     } on DioException catch (e) {
@@ -117,14 +128,14 @@ class AuthRepository {
   }
 
   //////// Profile
-  Future<CoreApiResult<UserModel>> fetchProfileInfo() async {
+  Future<CoreApiResult<UserModelData>> fetchProfileInfo() async {
     try {
       final token = tokenService.getToken();
       final Response response = await apiManager.dio.get(
         "/show-profile",
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );
-      final profile = UserModel.fromJson(response.data['user']);
+      final profile = UserModelData.fromJson(response.data['user']);
       return CoreApiResult.success(data: profile);
     } catch (e) {
       final error = NetworkExceptions.getDioException(e);

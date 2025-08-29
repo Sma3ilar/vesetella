@@ -69,7 +69,7 @@ class DesignRepository {
       } else {
         // Handle API errors
         final error = NetworkExceptions.defaultError(
-          TrKeys.failedToCreateDesign.trn,
+          TrKeys.failedToCreateDesign,
         );
         return CoreApiResult.failure(error: error);
       }
@@ -105,7 +105,7 @@ class DesignRepository {
       } else {
         // Handle API errors
         final error = NetworkExceptions.defaultError(
-          TrKeys.failedToCreateDesign.trn,
+          TrKeys.failedToCreateDesign,
         );
         return CoreApiResult.failure(error: error);
       }
@@ -133,12 +133,12 @@ class DesignRepository {
       // Check for success
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Success
-        showMessage(TrKeys.designDeletedSuccessfully.trn, true);
+        showMessage(TrKeys.designDeletedSuccessfully, true);
         return CoreApiResult.success(data: null); // No data to return
       } else {
         // Handle API errors
         final error = NetworkExceptions.defaultError(
-          TrKeys.failedToDeleteDesign.trn,
+          TrKeys.failedToDeleteDesign,
         );
         showMessage(error.message, false);
         return CoreApiResult.failure(error: error);

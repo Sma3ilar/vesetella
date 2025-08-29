@@ -1,20 +1,23 @@
 // lib/models/request/signup_request.dart
 
 class SignupRequest {
-  final String fullName;
+  final String name; // Changed from fullName to name
   final String email;
   final String password;
+  final String passwordConfirmation; // Added password_confirmation field
 
   SignupRequest({
-    required this.fullName,
+    required this.name, // Changed from fullName
     required this.email,
     required this.password,
+    required this.passwordConfirmation, // Added parameter
   });
 
-  // You would typically add a toJson() method here to send to an API
+  // Updated toJson method to match API expectations
   Map<String, dynamic> toJson() => {
-    'fullName': fullName,
+    'name': name, // Changed from fullName
     'email': email,
     'password': password,
+    'password_confirmation': passwordConfirmation, // Added with snake_case format
   };
 }

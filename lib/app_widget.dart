@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
           initialBinding: appBindings,
           title: 'Vestella',
           debugShowCheckedModeBanner: false,
-          initialRoute: AppRoutes.root,
+          initialRoute: AppRoutes.startDesigning,
           getPages: AppRoutes.getPages,
           defaultTransition: Transition.native,
         );

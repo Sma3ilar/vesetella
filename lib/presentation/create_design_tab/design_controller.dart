@@ -15,6 +15,10 @@ class DesignController extends GetxController {
   // --- State Management ---
   final RxInt currentStep = 1.obs;
   final RxBool isLoading = false.obs;
+  
+  // Track if design has been generated
+  final RxBool designGenerated = false.obs;
+  final RxBool designFinalized = false.obs;
 
   // --- Step 1: Dropdown Values ---
   final List<String> designOptions = ['Top', 'Dress', 'Pants', 'Jacket'];
@@ -54,7 +58,7 @@ class DesignController extends GetxController {
     super.onClose();
   }
 
-  // --- Navigation Logic ---
+  // --- Simplified Navigation Logic ---
   void goToNextStep() {
     if (currentStep.value < 5) {
       currentStep.value++;
@@ -67,8 +71,17 @@ class DesignController extends GetxController {
     }
   }
 
+  // Direct navigation to specific step
+  void goToStep(int step) {
+    if (step >= 1 && step <= 5) {
+      currentStep.value = step;
+    }
+  }
+
   void resetProcess() {
     currentStep.value = 1;
+    designGenerated.value = false;
+    designFinalized.value = false;
     selectedDesign.value = null;
     selectedFabric.value = null;
     selectedColor.value = null;
@@ -104,6 +117,7 @@ class DesignController extends GetxController {
       Get.snackbar(
         'Incomplete',
         'Please fill all dropdowns before proceeding.',
+        snackPosition: SnackPosition.BOTTOM,
       );
       return;
     }
@@ -115,11 +129,14 @@ class DesignController extends GetxController {
   Future<void> generateDesign() async {
     // 1. Close the dialog
     Get.back();
-
+  
     // 2. Set loading state
     isLoading.value = true;
-
+  
     try {
+      // Add a small delay to ensure the loading state is visible
+      await Future.delayed(const Duration(milliseconds: 300));
+      
       // 3. Create form data for API request
       final formData = FormData.fromMap({
         'design_type': selectedDesign.value,
@@ -129,16 +146,17 @@ class DesignController extends GetxController {
         'collar_type': selectedCollar.value,
         'sleeve_type': selectedSleeve.value,
       });
-
+  
       // 4. Call the repository to create the design
       final result = await designRepository.createDesign(formData);
-
+  
       // 5. Handle the result
       result.when(
         success: (_) {
-          // On success, move to the next step
-          showMessage(TrKeys.designCreatedSuccessfully.trn, true);
-          goToNextStep();
+          // On success, mark design as generated and move to the next step
+          designGenerated.value = true;
+          showMessage(TrKeys.designCreatedSuccessfully, true);
+          goToStep(2); // Directly go to step 2
         },
         failure: (error) {
           // On failure, show error message
@@ -147,7 +165,7 @@ class DesignController extends GetxController {
       );
     } catch (e) {
       // Handle unexpected errors
-      showMessage(TrKeys.unexpectedError.trn, false);
+      showMessage(TrKeys.unexpectedError, false);
     } finally {
       // Reset loading state
       isLoading.value = false;
@@ -161,10 +179,13 @@ class DesignController extends GetxController {
       showMessage('Please enter all measurements', false);
       return;
     }
-
+  
     isLoading.value = true;
-
+  
     try {
+      // Add a small delay to ensure the loading state is visible
+      await Future.delayed(const Duration(milliseconds: 300));
+      
       // Create form data with all design information
       final formData = FormData.fromMap({
         'design_type': selectedDesign.value,
@@ -177,15 +198,16 @@ class DesignController extends GetxController {
         'width': widthController.text,
         'height': heightController.text,
       });
-
+  
       // Call the repository to create the design
       final result = await designRepository.createDesign(formData);
-
+  
       // Handle the result
       result.when(
         success: (_) {
+          designFinalized.value = true;
           showMessage('Design saved successfully!', true);
-          goToNextStep(); // Move to the final step
+          goToStep(5); // Directly go to final step
         },
         failure: (error) {
           showMessage(error.message, false);
@@ -237,23 +259,27 @@ class GenerationConfirmationDialog extends GetView<DesignController> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 30.h),
-            Obx(
-              () => controller.isLoading.value
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: controller.generateDesign,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF345F56),
-                        minimumSize: Size(double.infinity, 60.h),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.r),
+            // Use a separate container for the button to avoid layout shifts
+            SizedBox(
+              height: 60.h,
+              child: Obx(
+                () => controller.isLoading.value
+                    ? const Center(child: CircularProgressIndicator())
+                    : ElevatedButton(
+                        onPressed: controller.generateDesign,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF345F56),
+                          minimumSize: Size(double.infinity, 60.h),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        child: Text(
+                          'Generate',
+                          style: TextStyle(fontSize: 20.sp, color: Colors.white),
                         ),
                       ),
-                      child: Text(
-                        'Generate',
-                        style: TextStyle(fontSize: 20.sp, color: Colors.white),
-                      ),
-                    ),
+              ),
             ),
             SizedBox(height: 15.h),
             ElevatedButton(

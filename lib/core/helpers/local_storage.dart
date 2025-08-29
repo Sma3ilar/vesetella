@@ -1,3 +1,4 @@
+import 'package:pg_web/models/data/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../constants/app_constants.dart';
@@ -95,22 +96,21 @@ class LocalStorage {
   bool getIsViewedOnboarding() =>
       _prefs?.getBool(AppConstants.keyIsOnBoarded) ?? false;
 
-  // Visitor user data
-  // Future<void> setVisitorData(VisitorModel userData) async {
-  //   print('setVisitorData');
-  //   await saveObject<VisitorModel>(AppConstants.keyVisitorUser, userData);
-  // }
+  // User data
+  Future<void> setUserData(UserData userData) async {
+    print('setUserData');
+    await saveObject<UserData>(AppConstants.keyUser, userData);
+  }
 
-  // Future<VisitorModel?> getVisitorData() async {
-  //   print('getVisitorData');
-  //   return getObject<VisitorModel>(
-  //     AppConstants.keyVisitorUser,
-  //     (json) => VisitorModel.fromJson(json),
-  //   );
-  // }
+  Future<UserData?> getUserData() async {
+    print('getUserData');
+    return getObject<UserData>(
+      AppConstants.keyUser,
+      (json) => UserData.fromJson(json),
+    );
+  }
 
-  // void deleteVisitorData() => _prefs?.remove(AppConstants.keyVisitorUser);
-
+  void deleteUserData() => _prefs?.remove(AppConstants.keyUser);
   // Language storage
 
   Future<void> setLanguage(String code) async {
