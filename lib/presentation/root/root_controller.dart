@@ -13,7 +13,6 @@ class RootController extends GetxController {
     try {
       // Add a small delay to simulate loading processes like checking storage.
       await Future.delayed(const Duration(seconds: 1));
-
       // Check if user is authenticated using LocalStorage
       final bool isAuthenticated = LocalStorage.instance.getIsAuth();
       final String token = LocalStorage.instance.getToken();

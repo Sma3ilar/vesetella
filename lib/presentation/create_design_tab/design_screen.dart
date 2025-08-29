@@ -8,14 +8,15 @@ class DesignScreen extends GetView<DesignController> {
 
   @override
   Widget build(BuildContext context) {
+    // Using Obx to rebuild the widget when observable variables change.
     return Obx(() {
-      // First check if the controller is in a loading state
+      // Show a loading indicator overlayed on the content if isLoading is true.
+      // This provides a better user experience than replacing the whole screen.
       if (controller.isLoading.value) {
-        return const Center(
-          child: CircularProgressIndicator(),
-        );
+        return const Center(child: CircularProgressIndicator());
       }
-      
+
+      // Main container for the design screen
       return Container(
         margin: EdgeInsets.symmetric(horizontal: 50.w),
         padding: EdgeInsets.symmetric(horizontal: 100.w, vertical: 50.h),
@@ -38,14 +39,14 @@ class DesignScreen extends GetView<DesignController> {
             ),
           ),
         ),
-        // Use AnimatedSwitcher for smooth transitions between steps
+        // AnimatedSwitcher provides smooth fade transitions between steps.
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 300),
           transitionBuilder: (child, animation) {
             return FadeTransition(opacity: animation, child: child);
           },
           child: SizedBox(
-            // Use a key to tell Flutter that the widget is changing
+            // A ValueKey ensures the AnimatedSwitcher recognizes a change in widget.
             key: ValueKey<int>(controller.currentStep.value),
             child: _buildCurrentStep(),
           ),
@@ -54,7 +55,7 @@ class DesignScreen extends GetView<DesignController> {
     });
   }
 
-  /// Returns the widget for the current step.
+  /// Builds the widget corresponding to the current step.
   Widget _buildCurrentStep() {
     switch (controller.currentStep.value) {
       case 1:
@@ -72,7 +73,7 @@ class DesignScreen extends GetView<DesignController> {
     }
   }
 
-  // --- WIDGET FOR EACH STEP ---
+  // --- WIDGETS FOR EACH STEP ---
 
   Widget _buildStep1() {
     return Column(
@@ -128,17 +129,16 @@ class DesignScreen extends GetView<DesignController> {
         secondaryText: 'Save info',
         onPrimary: controller.goToNextStep,
         onSecondary: () {
-          /* Add save info logic */
+          /* Add save info logic here */
         },
+        onBack: controller.goToPreviousStep,
       ),
     );
   }
 
-  // Update Step 4 to submit the final design
   Widget _buildStep4() {
     return Column(
       children: [
-        // This step doesn't have a large title in the design
         Expanded(
           child: Center(
             child: ConstrainedBox(
@@ -168,7 +168,8 @@ class DesignScreen extends GetView<DesignController> {
         ),
         _buildNavigationButtons(
           primaryText: 'Cut',
-          onPrimary: controller.goToNextStep,
+          // **FIXED**: This now calls the correct submission function.
+          onPrimary: controller.submitFinalDesign,
           onBack: controller.goToPreviousStep,
         ),
       ],
@@ -178,19 +179,20 @@ class DesignScreen extends GetView<DesignController> {
   Widget _buildStep5() {
     return _buildCongratsPage(
       title: "YOU'RE DONE!",
-      imageCount: 1, // Only one image for the final result
+      imageCount: 1,
       buttons: Center(
         child: SizedBox(
           width: 280.w,
           child: _StyledButton(
             text: 'Save final cut',
             onPressed: controller.resetProcess,
-            color: const Color(0xFF4C7770), // Primary color
+            color: const Color(0xFF4C7770),
           ),
         ),
       ),
     );
   }
+
   // --- REUSABLE HELPER WIDGETS ---
 
   TextStyle _titleTextStyle() => TextStyle(
@@ -208,7 +210,7 @@ class DesignScreen extends GetView<DesignController> {
   );
 
   Widget _buildDropdownColumn({required bool isLeft}) {
-    // This helper builds one of the two columns of dropdowns in Step 1
+    // This helper builds one of the two columns of dropdowns in Step 1.
     return Expanded(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -224,8 +226,19 @@ class DesignScreen extends GetView<DesignController> {
                 _CustomDropdown(
                   title: 'Choose the Collar design',
                   hint: 'Collar design',
+                  // **FIXED**: Connected to the controller
+                  value: controller.selectedCollar.value,
+                  items: controller.collarOptions,
+                  onChanged: (val) => controller.selectedCollar.value = val,
                 ),
-                _CustomDropdown(title: 'Sleeve', hint: 'Sleeve'),
+                _CustomDropdown(
+                  title: 'Sleeve',
+                  hint: 'Sleeve',
+                  // **FIXED**: Connected to the controller
+                  value: controller.selectedSleeve.value,
+                  items: controller.sleeveOptions,
+                  onChanged: (val) => controller.selectedSleeve.value = val,
+                ),
               ]
             : [
                 _CustomDropdown(
@@ -235,8 +248,22 @@ class DesignScreen extends GetView<DesignController> {
                   items: controller.fabricOptions,
                   onChanged: (val) => controller.selectedFabric.value = val,
                 ),
-                _CustomDropdown(title: 'Choose Color', hint: 'Color'),
-                _CustomDropdown(title: 'Choose the size', hint: 'size'),
+                _CustomDropdown(
+                  title: 'Choose Color',
+                  hint: 'Color',
+                  // **FIXED**: Connected to the controller
+                  value: controller.selectedColor.value,
+                  items: controller.colorOptions,
+                  onChanged: (val) => controller.selectedColor.value = val,
+                ),
+                _CustomDropdown(
+                  title: 'Choose the size',
+                  hint: 'size',
+                  // **FIXED**: Connected to the controller
+                  value: controller.selectedSize.value,
+                  items: controller.sizeOptions,
+                  onChanged: (val) => controller.selectedSize.value = val,
+                ),
               ],
       ),
     );
@@ -293,14 +320,15 @@ class DesignScreen extends GetView<DesignController> {
             onPressed: onBack,
             color: const Color(0xFF923F3B),
           ),
-        if (onBack != null || onSecondary != null) SizedBox(width: 20.w),
+        if (onBack != null && (secondaryText != null || primaryText.isNotEmpty))
+          SizedBox(width: 20.w),
         if (secondaryText != null && onSecondary != null)
           _StyledButton(
             text: secondaryText,
             onPressed: onSecondary,
             color: const Color(0xFF923F3B),
           ),
-        if (onSecondary != null) SizedBox(width: 20.w),
+        if (secondaryText != null) SizedBox(width: 20.w),
         _StyledButton(
           text: primaryText,
           onPressed: onPrimary,

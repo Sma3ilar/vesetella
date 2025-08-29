@@ -9,8 +9,8 @@ class RootScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Explicitly initialize the controller
-    final controller = Get.put(RootController());
-    
+    Get.find<RootController>();
+
     // You can also add your background image here for a seamless transition
     return const Scaffold(body: Center(child: LoadingIndicatorWidget()));
   }

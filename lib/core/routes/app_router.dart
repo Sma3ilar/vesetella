@@ -25,59 +25,61 @@ class AppRoutes {
   static const String welcome = '/welcome';
   static const String login = '/login';
   static const String signup = '/signup';
+
+  // Parent route is absolute
   static const String mainLayout = '/main-layout';
-  static const String myAccount = '/my-account';
-  static const String myDesigns = '/my-designs';
-  static const String startDesigning = '/start-designing';
-  static const String myFabrics = '/my-fabrics';
+
+  static const String myAccount = '/main-layout/my-account';
+  static const String myDesigns = '/main-layout/my-designs';
+  static const String startDesigning = '/main-layout/start-designing';
+  static const String myFabrics = '/main-layout/my-fabrics';
 
   static final List<GetPage> getPages = [
+    GetPage(name: root, page: () => const RootScreen(), binding: RootBinding()),
     GetPage(
-      name: '/', // This is now your main entry point
-      page: () => const RootScreen(),
-      binding: RootBinding(),
-    ),
-    GetPage(
-      name: AppRoutes.welcome, // Define this constant in your AppRoutes file
+      name: welcome,
       page: () => const WelcomeScreen(),
       binding: WelcomeBinding(),
       transition: Transition.native,
     ),
     GetPage(
-      name: AppRoutes.signup,
+      name: signup,
       page: () => const SignupScreen(),
       binding: SignupBinding(),
       transition: Transition.native,
     ),
     GetPage(
-      name: AppRoutes.login,
+      name: login,
       page: () => const LoginScreen(),
       binding: LoginBinding(),
       transition: Transition.native,
     ),
-    // Fix the route names in the children section
+    // This is the parent route for our nested layout
     GetPage(
-      name: AppRoutes.mainLayout,
+      name: mainLayout,
       page: () => const MainLayout(),
       binding: MainLayoutBinding(),
+      // The default page to show in the GetRouterOutlet
+      participatesInRootNavigator: true,
+      preventDuplicates: true,
       children: [
         GetPage(
-          name: AppRoutes.myAccount, // Use the constant directly
+          name: myAccount, // Now uses the relative 'my-account'
           page: () => const MyAccountScreen(),
           binding: MyAccountBinding(),
         ),
         GetPage(
-          name: AppRoutes.startDesigning, // Use the constant directly
+          name: startDesigning, // Uses 'start-designing'
           page: () => const DesignScreen(),
           binding: DesignBinding(),
         ),
         GetPage(
-          name: AppRoutes.myDesigns, // Use the constant directly
+          name: myDesigns, // Uses 'my-designs'
           page: () => const MyDesignsScreen(),
           binding: MyDesignsBinding(),
         ),
         GetPage(
-          name: AppRoutes.myFabrics, // Add the MyFabrics route
+          name: myFabrics, // Uses 'my-fabrics'
           page: () => const MyFabricsScreen(),
           binding: MyFabricsBinding(),
         ),

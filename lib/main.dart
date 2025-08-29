@@ -6,7 +6,14 @@ import 'core/helpers/local_storage.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await LocalStorage.init();
+  
+  try {
+    await LocalStorage.init();
+  } catch (e) {
+    print('LocalStorage initialization failed: $e');
+    // Continue without local storage or show error
+  }
+  
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,

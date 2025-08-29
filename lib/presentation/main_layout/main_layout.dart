@@ -11,10 +11,12 @@ class MainLayout extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFDEECD),
       appBar: const MainAppBar(),
-      // This is the magic widget! It renders the child pages defined in your routes.
+      // The GetRouterOutlet renders the child pages defined in your routes.
       body: GetRouterOutlet(
-        // Provide a default route if currentConfiguration is null
-        initialRoute: Get.rootDelegate.currentConfiguration?.uri.toString() ?? AppRoutes.startDesigning,
+        // **FIXED**: The initialRoute now uses the full path constant.
+        initialRoute:
+            Get.rootDelegate.currentConfiguration?.uri.toString() ??
+            AppRoutes.startDesigning,
       ),
     );
   }
