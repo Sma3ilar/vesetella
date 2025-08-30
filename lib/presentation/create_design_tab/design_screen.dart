@@ -113,7 +113,7 @@ class DesignScreen extends GetView<DesignController> {
       imageCount: 3,
       buttons: _buildNavigationButtons(
         primaryText: 'Continue and view pattern',
-        onPrimary: controller.goToNextStep,
+        onPrimary: controller.fetchDesignResult, // Changed: Call fetchDesignResult instead of goToNextStep
         onBack: controller.goToPreviousStep,
       ),
     );
@@ -185,7 +185,7 @@ class DesignScreen extends GetView<DesignController> {
           width: 280.w,
           child: _StyledButton(
             text: 'Save final cut',
-            onPressed: controller.resetProcess,
+            onPressed: controller.navigateToMyFabrics, // Changed: Call navigateToMyFabrics instead of resetProcess
             color: const Color(0xFF4C7770),
           ),
         ),

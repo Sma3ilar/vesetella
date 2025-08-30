@@ -13,10 +13,8 @@ class MainLayout extends StatelessWidget {
       appBar: const MainAppBar(),
       // The GetRouterOutlet renders the child pages defined in your routes.
       body: GetRouterOutlet(
-        // **FIXED**: The initialRoute now uses the full path constant.
-        initialRoute:
-            Get.rootDelegate.currentConfiguration?.uri.toString() ??
-            AppRoutes.startDesigning,
+        // Fixed: Use a direct route string instead of the current URI
+        initialRoute: AppRoutes.startDesigning,
       ),
     );
   }

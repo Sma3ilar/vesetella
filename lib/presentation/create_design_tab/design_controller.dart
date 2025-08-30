@@ -6,6 +6,8 @@ import 'package:pg_web/repositories/design_repository.dart';
 import 'package:pg_web/core/constants/tr_keys.dart';
 import 'package:pg_web/presentation/widgets/snack_bar.dart';
 
+import '../main_layout/main_layout_controller.dart';
+
 class DesignController extends GetxController {
   final DesignRepository designRepository;
 
@@ -201,8 +203,8 @@ class DesignController extends GetxController {
         success: (design) {
           // On success, mark design as generated and move to the next step
           designGenerated.value = true;
-          showMessage('Design created successfully!', true);
-          goToStep(2); // Directly go to step 2
+          showMessage('Design fetched successfully!', true);
+          goToStep(3); // Changed: Navigate to step 3 instead of step 2
         },
         failure: (error) {
           // On failure, show error message
@@ -243,7 +245,8 @@ class DesignController extends GetxController {
         success: (_) {
           designFinalized.value = true;
           showMessage('Fabric saved successfully!', true);
-          goToStep(5); // Directly go to final step
+          // After creating fabric, fetch the fabric result
+          fetchFabricResult(); // Added: Call fetchFabricResult after successful fabric creation
         },
         failure: (error) {
           showMessage(error.message, false);
@@ -267,8 +270,8 @@ class DesignController extends GetxController {
         success: (fabric) {
           // On success, mark design as generated and move to the next step
           designGenerated.value = true;
-          showMessage('Design created successfully!', true);
-          goToStep(2); // Directly go to step 2
+          showMessage('Fabric fetched successfully!', true);
+          goToStep(5); // Changed: Navigate to step 5 instead of step 2
         },
         failure: (error) {
           // On failure, show error message
@@ -280,6 +283,13 @@ class DesignController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  void navigateToMyFabrics() {
+    // First reset the current process
+    resetProcess();
+    // Then navigate to My Fabrics tab (index 3 in the tab routes)
+    Get.find<MainLayoutController>().changeTab(3);
   }
 }
 
