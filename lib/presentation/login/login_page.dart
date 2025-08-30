@@ -98,6 +98,8 @@ class LoginScreen extends GetView<LoginController> {
                   label: 'Email',
                   hint: 'Enter your Email',
                   controller: controller.emailController,
+                  focusNode: controller.emailFocus,
+                  nextFocusNode: controller.passwordFocus,
                   validator: (value) {
                     if (value!.isEmpty) return 'Email is required';
                     if (!GetUtils.isEmail(value)) return 'Enter a valid email';
@@ -109,6 +111,8 @@ class LoginScreen extends GetView<LoginController> {
                   hint: 'Enter your Password',
                   isPassword: true,
                   controller: controller.passwordController,
+                  focusNode: controller.passwordFocus,
+                  onSubmitted: controller.state.value.isLoading ? null : controller.login,
                   validator: (value) {
                     if (value!.isEmpty) return 'Password is required';
                     if (value.length < 6)
@@ -193,6 +197,9 @@ class _CustomAuthTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool isPassword;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
+  final VoidCallback? onSubmitted;
 
   const _CustomAuthTextField({
     required this.label,
@@ -200,6 +207,9 @@ class _CustomAuthTextField extends StatelessWidget {
     required this.controller,
     this.isPassword = false,
     this.validator,
+    this.focusNode,
+    this.nextFocusNode,
+    this.onSubmitted,
   });
 
   @override
@@ -223,6 +233,15 @@ class _CustomAuthTextField extends StatelessWidget {
             controller: controller,
             obscureText: isPassword,
             validator: validator,
+            focusNode: focusNode,
+            onFieldSubmitted: (_) {
+              if (nextFocusNode != null) {
+                FocusScope.of(context).requestFocus(nextFocusNode);
+              } else if (onSubmitted != null) {
+                onSubmitted!();
+              }
+            },
+            textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(

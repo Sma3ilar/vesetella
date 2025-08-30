@@ -91,17 +91,24 @@ class SignupScreen extends GetView<SignupController> {
                   SizedBox(height: 40.h),
 
                   // Form Fields using our custom widget
+                  // In the form section
                   _CustomAuthTextField(
                     label: 'Full Name',
                     hint: 'Enter your Full Name',
                     controller: controller.fullNameController,
-                    validator: (value) =>
-                        value!.isEmpty ? 'Full name is required' : null,
+                    focusNode: controller.fullNameFocus,
+                    nextFocusNode: controller.emailFocus,
+                    validator: (value) {
+                      if (value!.isEmpty) return 'Full name is required';
+                      return null;
+                    },
                   ),
                   _CustomAuthTextField(
                     label: 'Email',
                     hint: 'Enter your Email',
                     controller: controller.emailController,
+                    focusNode: controller.emailFocus,
+                    nextFocusNode: controller.passwordFocus,
                     validator: (value) {
                       if (value!.isEmpty) return 'Email is required';
                       if (!GetUtils.isEmail(value))
@@ -114,6 +121,8 @@ class SignupScreen extends GetView<SignupController> {
                     hint: 'Enter your Password',
                     isPassword: true,
                     controller: controller.passwordController,
+                    focusNode: controller.passwordFocus,
+                    nextFocusNode: controller.confirmPasswordFocus,
                     validator: (value) {
                       if (value!.isEmpty) return 'Password is required';
                       if (value.length < 6)
@@ -126,6 +135,8 @@ class SignupScreen extends GetView<SignupController> {
                     hint: 'Enter your Password',
                     isPassword: true,
                     controller: controller.confirmPasswordController,
+                    focusNode: controller.confirmPasswordFocus,
+                    onSubmitted: controller.state.value.isLoading ? null : controller.signup,
                     validator: (value) {
                       if (value!.isEmpty) return 'Please confirm your password';
                       if (value != controller.passwordController.text)
@@ -138,8 +149,8 @@ class SignupScreen extends GetView<SignupController> {
                   // Create Account Button
                   SizedBox(
                     width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: controller.signup,
+                    child: Obx(() => ElevatedButton(
+                      onPressed: controller.state.value.isLoading ? null : controller.signup,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF345F56),
                         padding: EdgeInsets.symmetric(vertical: 24.h),
@@ -147,16 +158,18 @@ class SignupScreen extends GetView<SignupController> {
                           borderRadius: BorderRadius.circular(16.r),
                         ),
                       ),
-                      child: Text(
-                        'Create Account',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 20.sp,
-                          fontFamily: 'Outfit',
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
+                      child: controller.state.value.isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : Text(
+                              'Create Account',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 20.sp,
+                                fontFamily: 'Outfit',
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                    )),
                   ),
                   SizedBox(height: 20.h),
 
@@ -203,6 +216,9 @@ class _CustomAuthTextField extends StatelessWidget {
   final TextEditingController controller;
   final bool isPassword;
   final String? Function(String?)? validator;
+  final FocusNode? focusNode;
+  final FocusNode? nextFocusNode;
+  final VoidCallback? onSubmitted;
 
   const _CustomAuthTextField({
     required this.label,
@@ -210,6 +226,9 @@ class _CustomAuthTextField extends StatelessWidget {
     required this.controller,
     this.isPassword = false,
     this.validator,
+    this.focusNode,
+    this.nextFocusNode,
+    this.onSubmitted,
   });
 
   @override
@@ -233,6 +252,15 @@ class _CustomAuthTextField extends StatelessWidget {
             controller: controller,
             obscureText: isPassword,
             validator: validator,
+            focusNode: focusNode,
+            onFieldSubmitted: (_) {
+              if (nextFocusNode != null) {
+                FocusScope.of(context).requestFocus(nextFocusNode);
+              } else if (onSubmitted != null) {
+                onSubmitted!();
+              }
+            },
+            textInputAction: nextFocusNode != null ? TextInputAction.next : TextInputAction.done,
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: TextStyle(

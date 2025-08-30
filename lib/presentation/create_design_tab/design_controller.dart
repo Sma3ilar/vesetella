@@ -85,7 +85,12 @@ class DesignController extends GetxController {
   // --- Simplified Navigation Logic ---
   void goToNextStep() {
     if (currentStep.value < 5) {
-      currentStep.value;
+      // Check if we're on step 3 and validate design selection
+      if (currentStep.value == 3 && selectedDesign.value == null) {
+        showMessage('Please select a design before proceeding', false);
+        return;
+      }
+      currentStep.value++;
     }
   }
 

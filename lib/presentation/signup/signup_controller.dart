@@ -15,7 +15,8 @@ class SignupController extends GetxController {
   SignupController({required this.authRepository});
 
   // --- State Management ---
-  SignupState state = const SignupInitial();
+  // Initialize with Rx<SignupState> instead of specifying a concrete type
+  final state = Rx<SignupState>(const SignupInitial());
 
   // --- Text Controllers ---
   var fullNameController = TextEditingController();
@@ -72,8 +73,7 @@ class SignupController extends GetxController {
     }
 
     // 2. Set state to loading and update the UI
-    state = const SignupLoading();
-    update(); // Notifies GetBuilder to rebuild
+    state.value = const SignupLoading();
 
     try {
       // 3. Create the request object from controller values
@@ -105,19 +105,19 @@ class SignupController extends GetxController {
           passwordController.clear();
           confirmPasswordController.clear();
 
-          state = const SignupSuccess();
+          state.value = const SignupSuccess();
           showMessage(TrKeys.registeredSuccessfully, true);
           // On success, navigate to the home screen, clearing the navigation stack
           Get.offAllNamed(AppRoutes.mainLayout);
         },
         failure: (error) {
-          state = SignupError(message: error.message);
+          state.value = SignupError(message: error.message);
           showMessage(error.message, false);
         },
       );
     } catch (e) {
       // Handle any unexpected errors during the process
-      state = SignupError(message: e.toString());
+      state.value = SignupError(message: e.toString());
       showMessage(TrKeys.unexpectedError, false);
     } finally {
       // 6. Update the UI one last time to reflect the final state

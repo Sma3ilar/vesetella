@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 @immutable
 abstract class SignupState {
   const SignupState();
+  
+  // Add this getter to easily check if state is loading
+  bool get isLoading => this is SignupLoading;
 }
 
 class SignupInitial extends SignupState {

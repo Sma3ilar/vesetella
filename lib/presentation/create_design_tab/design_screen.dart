@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../widgets/snack_bar.dart';
 import 'design_controller.dart';
 
 class DesignScreen extends GetView<DesignController> {
@@ -113,7 +114,8 @@ class DesignScreen extends GetView<DesignController> {
       imageCount: 3,
       buttons: _buildNavigationButtons(
         primaryText: 'Continue and view pattern',
-        onPrimary: controller.fetchDesignResult, // Changed: Call fetchDesignResult instead of goToNextStep
+        onPrimary: controller
+            .fetchDesignResult, // Changed: Call fetchDesignResult instead of goToNextStep
         onBack: controller.goToPreviousStep,
       ),
     );
@@ -127,7 +129,14 @@ class DesignScreen extends GetView<DesignController> {
       buttons: _buildNavigationButtons(
         primaryText: 'lets cut',
         secondaryText: 'Save info',
-        onPrimary: controller.goToNextStep,
+        onPrimary: () {
+          // Add validation before proceeding
+          if (controller.selectedDesign.value == null) {
+            showMessage('Please select a design before proceeding', false);
+            return;
+          }
+          controller.goToNextStep();
+        },
         onSecondary: () {
           /* Add save info logic here */
         },
@@ -185,7 +194,8 @@ class DesignScreen extends GetView<DesignController> {
           width: 280.w,
           child: _StyledButton(
             text: 'Save final cut',
-            onPressed: controller.navigateToMyFabrics, // Changed: Call navigateToMyFabrics instead of resetProcess
+            onPressed: controller
+                .navigateToMyFabrics, // Changed: Call navigateToMyFabrics instead of resetProcess
             color: const Color(0xFF4C7770),
           ),
         ),
