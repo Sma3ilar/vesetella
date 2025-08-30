@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:pg_web/core/extensions/translation_extension.dart';
 import 'package:pg_web/presentation/widgets/snack_bar.dart'; // Your custom snackbar
 import 'package:pg_web/core/constants/tr_keys.dart'; // Your translation keys
 import 'package:pg_web/models/request/login_request.dart'; // We will create this

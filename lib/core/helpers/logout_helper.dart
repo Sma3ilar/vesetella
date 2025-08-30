@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:pg_web/core/extensions/translation_extension.dart';
 import 'package:pg_web/presentation/widgets/snack_bar.dart';
 import 'package:rxdart/rxdart.dart';
 import '../constants/tr_keys.dart';

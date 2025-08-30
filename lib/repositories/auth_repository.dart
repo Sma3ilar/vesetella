@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:pg_web/core/constants/tr_keys.dart';
-import 'package:pg_web/core/extensions/translation_extension.dart';
 import '../core/helpers/api_result.dart';
 import '../core/helpers/dio_api_manager.dart';
 import '../core/helpers/network_exceptions.dart';

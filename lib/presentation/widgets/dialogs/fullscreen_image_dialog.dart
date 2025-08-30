@@ -1,7 +1,6 @@
 // // This is a reusable dialog for displaying images in full screen with zoom capabilities
 // import 'package:flutter/material.dart';
-// import 'package:pg_web/core/extensions/translation_extension.dart';
-// import '../../../core/constants/tr_keys.dart';
+// // import '../../../core/constants/tr_keys.dart';
 
 // class FullScreenImageDialog {
 //   /// Shows a full screen image dialog with zoom support

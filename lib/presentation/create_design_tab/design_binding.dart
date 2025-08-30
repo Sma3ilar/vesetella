@@ -1,3 +1,4 @@
+// Update the binding to inject FabricRepository instead of DesignRepository
 import 'package:get/get.dart';
 import 'package:pg_web/repositories/design_repository.dart';
 import 'design_controller.dart';

@@ -1,18 +1,18 @@
 import 'package:get/get.dart';
 
 import '../../models/data/fabric_item_model.dart';
-import '../../repositories/fabric_repository.dart';
+import '../../repositories/design_repository.dart';
 
 class MyFabricsController extends GetxController {
-  final FabricRepository fabricRepository;
-  
+  final DesignRepository designRepository;
+
   // State for loading indicator
   final RxBool isLoading = true.obs;
 
   // An observable list to hold the user's fabrics
   final RxList<FabricItemModel> fabrics = <FabricItemModel>[].obs;
 
-  MyFabricsController({required this.fabricRepository});
+  MyFabricsController({required this.designRepository});
 
   @override
   void onInit() {
@@ -24,7 +24,7 @@ class MyFabricsController extends GetxController {
   Future<void> fetchFabrics() async {
     try {
       isLoading.value = true;
-      
+
       // In a real implementation, you would call the repository here
       // For now, we'll use dummy data
       _loadDummyFabrics();
@@ -36,7 +36,7 @@ class MyFabricsController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
   /// Loads dummy fabric data for testing
   void _loadDummyFabrics() {
     // Create a list of dummy data

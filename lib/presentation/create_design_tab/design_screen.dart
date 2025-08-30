@@ -169,7 +169,7 @@ class DesignScreen extends GetView<DesignController> {
         _buildNavigationButtons(
           primaryText: 'Cut',
           // **FIXED**: This now calls the correct submission function.
-          onPrimary: controller.submitFinalDesign,
+          onPrimary: controller.createFabric,
           onBack: controller.goToPreviousStep,
         ),
       ],

@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:pg_web/core/extensions/translation_extension.dart';
 
 import '../../core/constants/tr_keys.dart';
 

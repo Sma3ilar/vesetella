@@ -1,21 +1,3 @@
-class CreateDesignResponse {
-  final String message;
-  final Design design;
-
-  CreateDesignResponse({required this.message, required this.design});
-
-  factory CreateDesignResponse.fromJson(Map<String, dynamic> json) {
-    return CreateDesignResponse(
-      message: json['message'] as String,
-      design: Design.fromJson(json['design'] as Map<String, dynamic>),
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {'message': message, 'design': design.toJson()};
-  }
-}
-
 class Design {
   final String sleeveType;
   final String collarType;

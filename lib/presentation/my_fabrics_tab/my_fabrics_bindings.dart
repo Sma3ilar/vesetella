@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import '../../../repositories/fabric_repository.dart';
+import 'package:pg_web/repositories/design_repository.dart';
 import '../../../core/helpers/dio_api_manager.dart';
 import '../../../core/helpers/token_interceptor.dart';
 import 'my_fabrics_controller.dart';
@@ -17,8 +17,8 @@ class MyFabricsBinding extends Bindings {
     }
 
     // Register the repository with its dependencies
-    Get.lazyPut<FabricRepository>(
-      () => FabricRepository(
+    Get.lazyPut<DesignRepository>(
+      () => DesignRepository(
         apiManager: Get.find<DioApiManager>(),
         tokenService: Get.find<TokenService>(),
       ),
@@ -27,7 +27,7 @@ class MyFabricsBinding extends Bindings {
 
     // Register the controller with the repository
     Get.lazyPut<MyFabricsController>(
-      () => MyFabricsController(fabricRepository: Get.find<FabricRepository>()),
+      () => MyFabricsController(designRepository: Get.find<DesignRepository>()),
     );
   }
 }

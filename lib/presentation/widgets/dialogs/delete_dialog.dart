@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pg_web/core/extensions/translation_extension.dart';
 import 'package:pg_web/core/theme/app_styles.dart';
 import 'package:pg_web/presentation/widgets/app_button.dart';
 

@@ -3,7 +3,6 @@ import 'package:get/get.dart' hide FormData;
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:dio/dio.dart';
 import 'package:pg_web/repositories/design_repository.dart';
-import 'package:pg_web/core/extensions/translation_extension.dart';
 import 'package:pg_web/core/constants/tr_keys.dart';
 import 'package:pg_web/presentation/widgets/snack_bar.dart';
 
@@ -15,18 +14,41 @@ class DesignController extends GetxController {
   // --- State Management ---
   final RxInt currentStep = 1.obs;
   final RxBool isLoading = false.obs;
-  
+
   // Track if design has been generated
   final RxBool designGenerated = false.obs;
   final RxBool designFinalized = false.obs;
 
   // --- Step 1: Dropdown Values ---
-  final List<String> designOptions = ['Top', 'Dress', 'Pants', 'Jacket'];
-  final List<String> fabricOptions = ['Cotton', 'Denim', 'Silk', 'Wool'];
-  final List<String> colorOptions = ['Red', 'Blue', 'Green', 'Black', 'White'];
-  final List<String> sizeOptions = ['S', 'M', 'L', 'XL'];
-  final List<String> collarOptions = ['Round', 'V-Neck', 'Polo', 'Mandarin'];
-  final List<String> sleeveOptions = ['Short', 'Long', '3/4', 'Sleeveless'];
+  // Question 1 – Design type (shown but NOT sent to backend)
+  final List<String> designOptions = ['Blouse'];
+
+  // Question 2 – Fabric (only Cotton selectable)
+  final List<String> fabricOptions = ['Cotton'];
+
+  // Question 3 – Sleeve type
+  final List<String> sleeveOptions = ['Sleeves', 'Half Sleeves', 'Sleeveless'];
+
+  // Question 4 – Collar type
+  final List<String> collarOptions = ['Round', 'Vneck'];
+
+  // Question 5 – Color (basic named colours)
+  final List<String> colorOptions = [
+    'Red',
+    'Yellow',
+    'Green',
+    'Blue',
+    'Purple',
+    'Black',
+    'White',
+    'Brown',
+    'Grey',
+    'Orange',
+    'Pink',
+  ];
+
+  // Question 6 – Size 38‒46
+  final List<String> sizeOptions = [for (var i = 38; i <= 46; i) i.toString()];
 
   // --- Selected Values ---
   final RxnString selectedDesign = RxnString();
@@ -61,7 +83,7 @@ class DesignController extends GetxController {
   // --- Simplified Navigation Logic ---
   void goToNextStep() {
     if (currentStep.value < 5) {
-      currentStep.value++;
+      currentStep.value;
     }
   }
 
@@ -95,8 +117,8 @@ class DesignController extends GetxController {
 
   /// Validates the form data for step 1
   bool validateStep1() {
-    return selectedDesign.value != null &&
-        selectedFabric.value != null &&
+    // Design is fixed; only ensure the selectable dropdowns are chosen.
+    return selectedFabric.value != null &&
         selectedColor.value != null &&
         selectedSize.value != null &&
         selectedCollar.value != null &&
@@ -125,37 +147,33 @@ class DesignController extends GetxController {
     Get.dialog(const GenerationConfirmationDialog(), barrierDismissible: false);
   }
 
-  /// Triggers the API call and moves to the next step on success.
+  /// Step 1: Triggers the API call and moves to the next step on success.
   Future<void> generateDesign() async {
     // 1. Close the dialog
     Get.back();
-  
+
     // 2. Set loading state
     isLoading.value = true;
-  
+
     try {
       // Add a small delay to ensure the loading state is visible
       await Future.delayed(const Duration(milliseconds: 300));
-      
-      // 3. Create form data for API request
-      final formData = FormData.fromMap({
-        'design_type': selectedDesign.value,
-        'fabric_type': selectedFabric.value,
-        'color': selectedColor.value,
-        'size': selectedSize.value,
-        'collar_type': selectedCollar.value,
-        'sleeve_type': selectedSleeve.value,
-      });
-  
-      // 4. Call the repository to create the design
-      final result = await designRepository.createDesign(formData);
-  
+
+      // 4. Call the design repository to create the design
+      final result = await designRepository.createDesign(
+        sleeveType: selectedSleeve.value!,
+        collarType: selectedCollar.value!,
+        color: selectedColor.value!,
+        fabricType: selectedFabric.value!,
+        size: selectedSize.value!,
+      );
+
       // 5. Handle the result
       result.when(
         success: (_) {
           // On success, mark design as generated and move to the next step
           designGenerated.value = true;
-          showMessage(TrKeys.designCreatedSuccessfully, true);
+          showMessage('Design created successfully!', true);
           goToStep(2); // Directly go to step 2
         },
         failure: (error) {
@@ -172,44 +190,88 @@ class DesignController extends GetxController {
     }
   }
 
-  /// Submits the final design with measurements
-  Future<void> submitFinalDesign() async {
+  // Step 2: fetch design using designRepository.fetchDesignData
+  Future<void> fetchDesignResult() async {
+    isLoading.value = true;
+    try {
+      final result = await designRepository.fetchDesignData(
+        designId: int.parse(selectedDesign.value!),
+      );
+      result.when(
+        success: (design) {
+          // On success, mark design as generated and move to the next step
+          designGenerated.value = true;
+          showMessage('Design created successfully!', true);
+          goToStep(2); // Directly go to step 2
+        },
+        failure: (error) {
+          // On failure, show error message
+          showMessage(error.message, false);
+        },
+      );
+    } catch (e) {
+      showMessage('An unexpected error occurred', false);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// Step 4: Submits the final design with measurements
+  Future<void> createFabric() async {
     // Validate measurements
     if (!validateStep4()) {
       showMessage('Please enter all measurements', false);
       return;
     }
-  
+
     isLoading.value = true;
-  
+
     try {
       // Add a small delay to ensure the loading state is visible
       await Future.delayed(const Duration(milliseconds: 300));
-      
-      // Create form data with all design information
-      final formData = FormData.fromMap({
-        'design_type': selectedDesign.value,
-        'fabric_type': selectedFabric.value,
-        'color': selectedColor.value,
-        'size': selectedSize.value,
-        'collar_type': selectedCollar.value,
-        'sleeve_type': selectedSleeve.value,
-        'num_patterns': numPatternsController.text,
-        'width': widthController.text,
-        'height': heightController.text,
-      });
-  
-      // Call the repository to create the design
-      final result = await designRepository.createDesign(formData);
-  
+
+      // Call the design repository to create the design
+      final result = await designRepository.createFabric(
+        designId: int.parse(selectedDesign.value!),
+        width: double.parse(widthController.text),
+        height: double.parse(heightController.text),
+        numOfPieces: int.parse(numPatternsController.text),
+      );
+
       // Handle the result
       result.when(
         success: (_) {
           designFinalized.value = true;
-          showMessage('Design saved successfully!', true);
+          showMessage('Fabric saved successfully!', true);
           goToStep(5); // Directly go to final step
         },
         failure: (error) {
+          showMessage(error.message, false);
+        },
+      );
+    } catch (e) {
+      showMessage('An unexpected error occurred', false);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  // step 5: fetch fabric using designRepository.fetchFabricData
+  Future<void> fetchFabricResult() async {
+    isLoading.value = true;
+    try {
+      final result = await designRepository.fetchFabricData(
+        fabricId: int.parse(selectedFabric.value!),
+      );
+      result.when(
+        success: (fabric) {
+          // On success, mark design as generated and move to the next step
+          designGenerated.value = true;
+          showMessage('Design created successfully!', true);
+          goToStep(2); // Directly go to step 2
+        },
+        failure: (error) {
+          // On failure, show error message
           showMessage(error.message, false);
         },
       );
@@ -276,7 +338,10 @@ class GenerationConfirmationDialog extends GetView<DesignController> {
                         ),
                         child: Text(
                           'Generate',
-                          style: TextStyle(fontSize: 20.sp, color: Colors.white),
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
               ),
